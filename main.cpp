@@ -11,7 +11,7 @@ int main() {
     cout << "Hey, " << name << "... press enter to continue ..." << endl;
 
     /* raylib graphics + games library: open a window, size 1000x800 pixels */
-    InitWindow(2000, 2000, "hackathon example");
+    InitWindow(1500, 800, "Hackathon #2");
     // FPS = frame rate, 30 per second, caps the window rendering
     SetTargetFPS(30);
 
@@ -35,12 +35,12 @@ int main() {
 
         // we need to draw a SHAPE to fill with the TEXTURE (image)
         Rectangle source = { 0, 0, (float)photo.width, (float)photo.height };
-        Rectangle dest   = { 0, 0, 1000, 800 };
+        Rectangle dest   = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() };
 
         DrawTexturePro(photo, source, dest, {0, 0}, 0.0f, WHITE);
         // parameters: texture, shape, destination, origin, rotation, color tint
 
-        DrawText(message.c_str(), 40, 40, 24, textColor);
+        DrawText(message.c_str(), 40, 40, 75, textColor);
         // message, x, y, font-size, color
         // more colors you can use with raylib:
         // https://www.raylib.com/examples/shapes/loader.html?name=shapes_colors_palette
@@ -56,7 +56,6 @@ int main() {
     UnloadTexture(photo);
     CloseWindow();
     cout << endl << endl << endl;
-    cout << "more can happen in the terminal after the window is closed ..." << endl;
-
+   
     return 0;
 }
