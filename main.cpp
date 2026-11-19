@@ -8,8 +8,33 @@ External Sources Cited:
 #include <iostream>
 #include "raylib.h"
 using namespace std;
+#define NUM_FRAMES  3
+
+// Custom button function using Raylib
+bool Button(Rectangle bounds, const char* text) {
+
+    // Draw button
+    DrawRectangleRec(bounds, BLUE);
+
+    // Display text
+    DrawText(text, bounds.x + 10, bounds.y + 10, 20, WHITE);
+
+    // Check if the mouse is inside the button
+    if (CheckCollisionPointRec(GetMousePosition(), bounds)) {
+
+        // Check if the button is clicked
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 int main() {
+    // Cursor
+    Vector2 ballPosition = { -100.0f, -100.0f };
+    Color ballColor = DARKBLUE;
 
     // Used your example as an outline for the basics of this program
     string name;
@@ -37,11 +62,31 @@ int main() {
     Color textColor = YELLOW;
     int fontSize = 75;
 
+    bool showButtons = false;
+
     // Main render loop controlled by raylib  
     while (!WindowShouldClose()) {
 
+        // Cursor
+        if (IsKeyPressed(KEY_H))
+        {
+            if (IsCursorHidden()) ShowCursor();
+            else HideCursor();
+        }
+
+        ballPosition = GetMousePosition();
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) ballColor = MAROON;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) ballColor = LIME;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) ballColor = DARKBLUE;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_SIDE)) ballColor = PURPLE;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_EXTRA)) ballColor = YELLOW;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_FORWARD)) ballColor = ORANGE;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_BACK)) ballColor = BEIGE;
+
         // raylib drawing setup and background color constraints (RAYWHITE, BLACK)
         BeginDrawing();
+
         ClearBackground(currentPhoto.id == diagramPhoto.id ? RAYWHITE : BLACK);
 
         // Aspect-ratio scaling and centering math generated with AI assistance (Google Gemini)
@@ -73,6 +118,27 @@ int main() {
             message = "Hey " + name + ", pick a compartment of the smartphone\nyou'd like to see explained more in depth";
             textColor = RED; // raylib built-in RED color
             fontSize = 40;
+
+            showButtons = true; // Buttons only show up after user continues
+        }
+
+        // Buttons
+        if (showButtons == true){
+            if (Button({25, 120, 235, 50}, "Logic Board")) {
+                cout << "Logic Board opened!" << endl;
+            }
+
+            if (Button({25, 190, 235, 50}, "Power Compartment")) {
+                cout << "Power Compartment opened!" << endl;
+            }
+
+            if (Button({25, 260, 235, 50}, "Camera Modules")) {
+                cout << "Camera Modules opened!" << endl;
+            }
+
+            if (Button({25, 330, 235, 50}, "Audio and Haptics")) {
+                cout << "Audio and Haptics opened!" << endl;
+            }
         }
 
         // End frame rendering via raylib
