@@ -20,6 +20,7 @@ target_link_libraries(example PRIVATE raylib)
 #  (Don't list .h files, only .cpp files.)
 # ==========================================================
 add_executable(main
-    main.cpp
+    newMain.cpp
+    Tempfun.cpp
 )
 target_link_libraries(main PRIVATE raylib)
