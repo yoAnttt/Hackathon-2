@@ -84,14 +84,6 @@ int main(void) {
 
         ballPosition = GetMousePosition();
 
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) ballColor = MAROON;
-        else if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) ballColor = LIME;
-        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) ballColor = DARKBLUE;
-        else if (IsMouseButtonPressed(MOUSE_BUTTON_SIDE)) ballColor = PURPLE;
-        else if (IsMouseButtonPressed(MOUSE_BUTTON_EXTRA)) ballColor = YELLOW;
-        else if (IsMouseButtonPressed(MOUSE_BUTTON_FORWARD)) ballColor = ORANGE;
-        else if (IsMouseButtonPressed(MOUSE_BUTTON_BACK)) ballColor = BEIGE;
-
         // Transition from opening photo to diagram when Enter is pressed
         if (IsKeyPressed(KEY_ENTER)) {
             currentPhoto = diagramPhoto;
