@@ -5,7 +5,8 @@
 
 using namespace std;
 
-// Custom button function with hover effect
+// Custom screen-space button with hover effect.
+// Uses Raylib's collision detection (CheckCollisionPointRec) and mouse input (IsMouseButtonPressed).
 bool Button(Rectangle bounds, const char* text) {
     if (CheckCollisionPointRec(GetMousePosition(), bounds)) {
         DrawRectangleRec(bounds, SKYBLUE);
@@ -23,7 +24,9 @@ bool Button(Rectangle bounds, const char* text) {
     return false;
 }
 
-// Same button logic, adjusted for 2D camera zoom/pan
+// World-space button for elements rendered inside BeginMode2D(camera).
+// Written with AI assistance (Google Gemini): uses Raylib's GetScreenToWorld2D() so button hitboxes
+// still align accurately when the user zooms or pans the 2D camera.
 bool WorldButton(Rectangle bounds, const char* text, Camera2D camera) {
     Vector2 worldMouse = GetScreenToWorld2D(GetMousePosition(), camera);
 
@@ -44,11 +47,11 @@ bool WorldButton(Rectangle bounds, const char* text, Camera2D camera) {
 }
 
 int main(void) {
-    // Cursor setup
+    // Cursor setup adapted from Raylib input/cursor examples
     Vector2 ballPosition = { -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
 
-    // Terminal greeting
+    // Terminal greeting.
     string name;
     cout << "Welcome to our project! We will be explaining how different compartments of a smartphone work." << endl;
     cout << "You usually don't think about this on a daily basis, but now you will have the opportunity to discover " << endl;
@@ -58,10 +61,11 @@ int main(void) {
     const int screenWidth = 1500;
     const int screenHeight = 800;
 
+    // Initialize Raylib window and lock frame rate to 60 FPS.
     InitWindow(screenWidth, screenHeight, "2D Camera Smartphone");
     SetTargetFPS(60);
 
-    // Load textures
+    // Load image assets into GPU memory using Raylib's LoadTexture() function.
     Texture2D smartphonePhoto = LoadTexture("smartphone-img.png");
     Texture2D diagramPhoto = LoadTexture("diagram.png");
     if (smartphonePhoto.id == 0 || diagramPhoto.id == 0) {
@@ -69,7 +73,7 @@ int main(void) {
         return -1;
     }
 
-    // Track current image and header text
+    // Track current image and header text styling.
     Texture2D currentPhoto = smartphonePhoto;
     string message = "Hey " + name + " press ENTER to continue!";
     Color textColor = BLUE;
@@ -82,13 +86,14 @@ int main(void) {
     DiagramNode InterfaceSubCM;
     DiagramNode InterfaceSubAH;
 
-    // Initialize 2D camera
+    // Initialize Raylib's Camera2D structure (adapted from Raylib's "2D Camera Mouse Zoom" example)
     Camera2D camera = { 0 };
     camera.zoom = 1.0f;
     int zoomMode = 0;
 
     bool showButtons = false;
 
+    // Main Raylib render loop (runs once per frame until ESC or window close)
     while (!WindowShouldClose()) {
         // ---------------------------------------------------------
         // 1. INPUT & CURSOR UPDATES
@@ -110,7 +115,7 @@ int main(void) {
         }
 
         // ---------------------------------------------------------
-        // 2. CAMERA ZOOM & PAN LOGIC
+        // 2. CAMERA ZOOM & PAN LOGIC (Adapted from Raylib 2D Camera Example)
         // ---------------------------------------------------------
         Vector2 renderScale = { (float)GetRenderWidth() / GetScreenWidth(), (float)GetRenderHeight() / GetScreenHeight() };
 
@@ -142,6 +147,7 @@ int main(void) {
             }
         }
 
+        // Click and drag with left mouse button to pan across the 2D camera view
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             Vector2 delta = GetMouseDelta();
             delta = Vector2Scale(delta, -1.0f / camera.zoom);
@@ -149,7 +155,7 @@ int main(void) {
         }
 
         // ---------------------------------------------------------
-        // 3. DRAWING
+        // 3. DRAWING (Raylib 2D Rendering)
         // ---------------------------------------------------------
         BeginDrawing();
         ClearBackground(BLACK);
@@ -164,7 +170,7 @@ int main(void) {
                 dest = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() };
             }
             else {
-                // Keep proportional scaling for diagramPhoto
+                // Scale diagramPhoto proportionally while leaving top margin for header text
                 float topMargin = 60.0f;
                 float availableHeight = GetScreenHeight() - topMargin;
                 float scaleX = (float)GetScreenWidth() / currentPhoto.width;
@@ -188,18 +194,18 @@ int main(void) {
 
             DrawTexturePro(currentPhoto, source, dest, { 0, 0 }, 0.0f, WHITE);
 
-            // Shrink initial font size only if it is wider than the screen
+            // Used AI to help prevent long greeting text from overflowing off-screen.
             if (currentPhoto.id == smartphonePhoto.id) {
                 while (MeasureText(message.c_str(), fontSize) > GetScreenWidth() - 80 && fontSize > 10) {
                     fontSize -= 2;
                 }
             }
 
-            // Center the top message horizontally
+            // Center the top message horizontally using Raylib's MeasureText() function.
             int textWidth = MeasureText(message.c_str(), fontSize);
             int centeredX = (GetScreenWidth() - textWidth) / 2;
 
-            // Dark bar behind the opening text so it is easy to read
+            // Dark bar behind the opening text so it is easy to read.
             if (currentPhoto.id == smartphonePhoto.id) {
                 DrawRectangle(0, 20, GetScreenWidth(), 95, Fade(BLACK, 0.6f));
             }
@@ -207,19 +213,21 @@ int main(void) {
             DrawText(message.c_str(), centeredX, 30, fontSize, textColor);
         }
 
-        // Button opens interactive circles and disappears once clicked
+        // Button opens interactive circles and disappears once clicked.
         if (showButtons && !InterfaceMain.ShowCircle()) {
             if (Button({ 10, 10, 175, 50 }, "LEARN MORE..")) {
                 InterfaceMain.ToggleCircle();
             }
         }
 
+        // Interactive node diagram rendered inside Raylib's 2D camera space
         if (InterfaceMain.ShowCircle()) {
             BeginMode2D(camera);
 
             DrawCircle(400, 300, 50, RED);
             DrawCircleLines(400, 300, 70.0f, BLUE);
 
+            // Toggle visibility of the 4 outer compartment nodes
             if (WorldButton({ 375, 320, 45, 25 }, "LEARN MORE..", camera)) {
                 InterfaceSubPC.ToggleCircle();
                 InterfaceSubLB.ToggleCircle();
@@ -227,14 +235,17 @@ int main(void) {
                 InterfaceSubAH.ToggleCircle();
             }
 
+            // Draw connecting lines, compartment nodes, and info buttons when expanded
             if (InterfaceSubPC.ShowCircle() && InterfaceSubLB.ShowCircle()
                 && InterfaceSubCM.ShowCircle() && InterfaceSubAH.ShowCircle()) {
 
+                // Connecting lines calculated with AI assistance using outer-point circle coordinates
                 DrawLineV({ 350, 250 }, { 280, 200 }, RAYWHITE); // LB Line
                 DrawLineV({ 450, 250 }, { 520, 200 }, RAYWHITE); // CM Line
                 DrawLineV({ 350, 350 }, { 280, 400 }, RAYWHITE); // PC Line
                 DrawLineV({ 450, 350 }, { 520, 400 }, RAYWHITE); // AH Line
 
+                // Outer compartment circles
                 DrawCircle(280, 200, 30, PURPLE); // LB Circle
                 DrawCircle(520, 200, 30, BLUE);   // CM Circle
                 DrawCircle(280, 400, 30, VIOLET); // PC Circle
@@ -257,10 +268,12 @@ int main(void) {
                 }
             }
 
+            // End 2D camera transformation so UI stays fixed to the screen
             EndMode2D();
         }
 
-        // Show BACK button whenever past the opening smartphone photo
+        // Multi-step BACK navigation added with AI assistance (Google Gemini).
+        // Rendered outside BeginMode2D so it stays pinned in the top-left corner.
         if (currentPhoto.id == diagramPhoto.id || InterfaceMain.ShowCircle()) {
             if (Button({ 10, 70, 120, 45 }, "BACK") || IsKeyPressed(KEY_BACKSPACE)) {
 
@@ -294,6 +307,7 @@ int main(void) {
         EndDrawing();
     }
 
+    // Close Raylib window cleanly
     UnloadTexture(smartphonePhoto);
     UnloadTexture(diagramPhoto);
     CloseWindow();

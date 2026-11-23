@@ -1,5 +1,7 @@
 #include "Tempfun.h"
 
+// Constructor initializes both visibility states to hidden (false).
+// Initial layout and debugging assisted by AI.
 DiagramNode::DiagramNode() {
     displayCircle = false;
     displaySubNodes = false;
