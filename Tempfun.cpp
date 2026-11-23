@@ -118,6 +118,7 @@ void DiagramNode::DrawCircleLines(int centerX, int centerY, float radius, Color 
 
 bool DiagramNode::Button(Rectangle bounds, const char* text) const {
     if (CheckCollisionPointRec(GetMousePosition(), bounds)) {
+
         DrawRectangleRec(bounds, SKYBLUE);
         DrawText(text, bounds.x + 15, bounds.y + 15, 20, WHITE);
 

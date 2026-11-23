@@ -21,6 +21,7 @@ bool Button(Rectangle bounds, const char* text) {
 
     return false;
 }
+
 // Custom button function with hover effect
 int main(void) {
     // Cursor setup
@@ -43,6 +44,7 @@ int main(void) {
     // Load textures
     Texture2D smartphonePhoto = LoadTexture("smartphone-img.png");
     Texture2D diagramPhoto = LoadTexture("diagram.png");
+
     if (smartphonePhoto.id == 0 || diagramPhoto.id == 0) {
         CloseWindow();
         return -1;
@@ -56,8 +58,10 @@ int main(void) {
     int fontSize = 50;
 
     DiagramNode InterfaceMain;  
+
     InterfaceMain.SetCircle(false, false, false, false, false);
     InterfaceMain.SetLine(false, false, false, false);
+
     // Initialize 2D camera
     Camera2D camera = { 0 };
     camera.zoom = 1.0f;
@@ -69,7 +73,7 @@ int main(void) {
     ClearBackground(BLACK);
  
     while (!WindowShouldClose()) {
-// ---------------------------------------------------------
+        // ---------------------------------------------------------
         // 1. INPUT & CURSOR UPDATES
         // ---------------------------------------------------------
         if (IsKeyPressed(KEY_H)) {
@@ -204,6 +208,7 @@ int main(void) {
             BeginMode2D(camera);
             InterfaceMain.DrawCircle(400, 300, 50, RED);
             InterfaceMain.DrawCircleLines(400, 300, 70.0f, BLUE);
+            
             InterfaceMain.ShowSubCircleAH();
             InterfaceMain.ShowSubCircleCM(); 
             InterfaceMain.ShowSubCircleLB(); 
@@ -214,6 +219,7 @@ int main(void) {
                 InterfaceMain.ToggleLineLB();
                 InterfaceMain.ToggleLineCM();
                 InterfaceMain.ToggleLineAH();
+
                 InterfaceMain.ToggleSubCirclePC(); 
                 InterfaceMain.ToggleSubCircleLB();
                 InterfaceMain.ToggleSubCircleCM();
@@ -235,17 +241,17 @@ int main(void) {
                 InterfaceMain.DrawCircle(520, 400, 30, PURPLE); // AH Circle
 
                 // 1. Power Compartment Button (Near {280, 200})
-                if (Button({ 245, 240, 70, 25 }, "PC Info")) {
+                if (Button({ 245, 240, 70, 25 }, "LB Info")) {
                     
                 }
 
                 // 2. Logic Board Button (Near {520, 200})
-                if (Button({ 485, 240, 70, 25 }, "LB Info")) {
+                if (Button({ 485, 240, 70, 25 }, "CM Info")) {
 
                 }
 
                 // 3. Control Module Button (Near {280, 400})
-                if (Button({ 245, 440, 70, 25 }, "CM Info")) {
+                if (Button({ 245, 440, 70, 25 }, "PC Info")) {
 
                 }
 

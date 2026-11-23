@@ -6,20 +6,21 @@
 
 class DiagramNode {
     private: 
-    bool DisplayMainCircle;
-    bool DisplaySubCirclePC;
-    bool DisplaySubCircleLB;
-    bool DisplaySubCircleCM;
-    bool DisplaySubCircleAH;
-    bool PCDisplayLine; 
-    bool LBDisplayLine;
-    bool CMDisplayLine;
-    bool AHDisplayLine; 
-    bool DisplayButtons;
+        bool DisplayMainCircle;
+        bool DisplaySubCirclePC;
+        bool DisplaySubCircleLB;
+        bool DisplaySubCircleCM;
+        bool DisplaySubCircleAH;
+        bool PCDisplayLine; 
+        bool LBDisplayLine;
+        bool CMDisplayLine;
+        bool AHDisplayLine; 
+        bool DisplayButtons;
 
     public:
-    DiagramNode();
-    // Circle
+        DiagramNode();
+
+        // Circle
         void DrawCircle(int centerX, int centerY, float radius, Color color) const;
         void SetCircle(bool MCircle, bool CirclePC, bool CircleLB, bool CircleCM, bool CircleAH);       
         bool ShowMainCircle() const;
@@ -32,6 +33,7 @@ class DiagramNode {
         void ToggleSubCircleLB(); 
         void ToggleSubCircleCM();
         void ToggleSubCircleAH();
+
         // Line
         void DrawLineV(Vector2 startPos, Vector2 endPos, Color color) const;
         void SetLine(bool PCLine, bool LBLine, bool CMLine, bool AHLine); 
@@ -44,7 +46,8 @@ class DiagramNode {
         void ToggleLineCM();
         void ToggleLineAH();
         void DrawCircleLines(int centerX, int centerY, float radius, Color color) const;
-        bool Button(Rectangle bounds, const char* text) const;        void SetB(bool SButton);
+        bool Button(Rectangle bounds, const char* text) const;        
+        void SetB(bool SButton);
         void ToggleB();
 };
 
