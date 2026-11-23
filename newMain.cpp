@@ -5,7 +5,6 @@
 
 using namespace std;
 
-// Custom button function with hover effect
 bool Button(Rectangle bounds, const char* text) {
     if (CheckCollisionPointRec(GetMousePosition(), bounds)) {
         DrawRectangleRec(bounds, SKYBLUE);
@@ -22,7 +21,7 @@ bool Button(Rectangle bounds, const char* text) {
 
     return false;
 }
-
+// Custom button function with hover effect
 int main(void) {
     // Cursor setup
     Vector2 ballPosition = { -100.0f, -100.0f };
@@ -30,14 +29,14 @@ int main(void) {
 
     // Terminal greeting
     string name;
-    cout << "Welcome to our project! We will be explaining how different compartments of a smartphone work. "
-    "You usually don't think about this on a daily basis, but now you will have the opportunity to discover "
-    "how your cellphone truly works. To start off, what is your name?" << endl;
+    cout << "Welcome to our project! We will be explaining how different compartments of a smartphone work." << endl;
+    cout << "You usually don't think about this on a daily basis, but now you will have the opportunity to discover " << endl;
+    cout << "how your cellphone truly works. To start off, what is your name?" << endl;
     cin >> name;
 
-    // Window setup (Used raylib example: core 2d camera mouse zoom)
     const int screenWidth = 1500;
     const int screenHeight = 800;
+
     InitWindow(screenWidth, screenHeight, "2D Camera Smartphone");
     SetTargetFPS(60);
 
@@ -49,32 +48,28 @@ int main(void) {
         return -1;
     }
 
+
     // Track current image and header text
     Texture2D currentPhoto = smartphonePhoto;
     string message = "Hey " + name + " press ENTER to continue!";
     Color textColor = BLUE;
     int fontSize = 50;
 
-    // DiagramNode class instances from Tempfun.h
-    DiagramNode InterfaceMain;
-    DiagramNode InterfaceSubPC;
-    DiagramNode InterfaceSubLB;
-    DiagramNode InterfaceSubCM;
-    DiagramNode InterfaceSubAH;
-
+    DiagramNode InterfaceMain;  
+    InterfaceMain.SetCircle(false, false, false, false, false);
+    InterfaceMain.SetLine(false, false, false, false);
     // Initialize 2D camera
     Camera2D camera = { 0 };
     camera.zoom = 1.0f;
     int zoomMode = 0;
 
-    // State booleans to control screen transitions
-    bool showCircles = false;
-    bool showButtons = false;
+     bool showButtons = false;
 
-    // Main game loop
+    BeginDrawing();
+    ClearBackground(BLACK);
+ 
     while (!WindowShouldClose()) {
-
-        // ---------------------------------------------------------
+// ---------------------------------------------------------
         // 1. INPUT & CURSOR UPDATES
         // ---------------------------------------------------------
         if (IsKeyPressed(KEY_H)) {
@@ -83,6 +78,14 @@ int main(void) {
         }
 
         ballPosition = GetMousePosition();
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) ballColor = MAROON;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) ballColor = LIME;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) ballColor = DARKBLUE;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_SIDE)) ballColor = PURPLE;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_EXTRA)) ballColor = YELLOW;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_FORWARD)) ballColor = ORANGE;
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_BACK)) ballColor = BEIGE;
 
         // Transition from opening photo to diagram when Enter is pressed
         if (IsKeyPressed(KEY_ENTER)) {
@@ -131,15 +134,14 @@ int main(void) {
             delta = Vector2Scale(delta, -1.0f / camera.zoom);
             camera.target = Vector2Add(camera.target, delta);
         }
-
         // ---------------------------------------------------------
         // 3. DRAWING
         // ---------------------------------------------------------
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(BLACK);
 
         // Draw image & prompt text (hidden once the interactive circles open)
-        if (!showCircles) {
+        if (!InterfaceMain.ShowMainCircle()) {
             Rectangle source = { 0, 0, (float)currentPhoto.width, (float)currentPhoto.height };
             Rectangle dest;
 
@@ -172,7 +174,7 @@ int main(void) {
 
             DrawTexturePro(currentPhoto, source, dest, { 0, 0 }, 0.0f, WHITE);
 
-            // Shrink initial font size only if it is wider than the screen
+            //Shrink initial font size only if it is wider than the screen
             // Used Gemini AI to help fix this issue of the text constantly falling off the screen
             if (currentPhoto.id == smartphonePhoto.id) {
                 while (MeasureText(message.c_str(), fontSize) > GetScreenWidth() - 80 && fontSize > 10) {
@@ -189,56 +191,75 @@ int main(void) {
                 DrawRectangle(0, 20, GetScreenWidth(), 95, Fade(BLACK, 0.6f));
             }
 
-            DrawText(message.c_str(), centeredX, 30, fontSize, textColor);
+            DrawText(message.c_str(), centeredX, 30, 40, textColor);
         }
-
         // Button opens interactive circles and disappears once clicked
-        if (showButtons && !showCircles) {
+        if (showButtons && !InterfaceMain.ShowMainCircle()) {
             if (Button({ 10, 10, 175, 50 }, "LEARN MORE..")) {
-                showCircles = true;
+                InterfaceMain.ToggleMainCircle();
             }
         }
-
-        // Interactive mind-map circles with 2D camera zoom/pan
-        if (showCircles) {
+        
+        if(InterfaceMain.ShowMainCircle() ) {
             BeginMode2D(camera);
-
-            // Power Compartment
-            InterfaceSubPC.DrawCircleLines(280, 200, 40.0f, ORANGE);
-            InterfaceSubPC.DrawLineV({ 400, 300 }, { 280, 200 }, BLACK);
-            InterfaceSubPC.DrawCircle(280, 200, 30, PURPLE);
-
-            // Logic Board
-            InterfaceSubLB.DrawCircleLines(520, 200, 40.0f, LIGHTGRAY);
-            InterfaceSubLB.DrawLineV({ 400, 300 }, { 520, 200 }, BLACK);
-            InterfaceSubLB.DrawCircle(520, 200, 30, PINK);
-
-            // Control Module
-            InterfaceSubCM.DrawCircleLines(280, 400, 40.0f, MAROON);
-            InterfaceSubCM.DrawLineV({ 400, 300 }, { 280, 400 }, BLACK);
-            InterfaceSubCM.DrawCircle(280, 400, 30, LIME);
-
-            // Audio & Haptics
-            InterfaceSubAH.DrawCircleLines(520, 400, 40.0f, DARKGREEN);
-            InterfaceSubAH.DrawLineV({ 400, 300 }, { 520, 400 }, BLACK);
-            InterfaceSubAH.DrawCircle(520, 400, 30, BLUE);
-
-            // Main Center Circle
             InterfaceMain.DrawCircle(400, 300, 50, RED);
             InterfaceMain.DrawCircleLines(400, 300, 70.0f, BLUE);
+            InterfaceMain.ShowSubCircleAH();
+            InterfaceMain.ShowSubCircleCM(); 
+            InterfaceMain.ShowSubCircleLB(); 
+            InterfaceMain.ShowSubCirclePC();
 
-            EndMode2D();
+            if(Button({ 375, 320, 45, 25 }, "LEARN MORE..")) {
+                InterfaceMain.ToggleLinePC();
+                InterfaceMain.ToggleLineLB();
+                InterfaceMain.ToggleLineCM();
+                InterfaceMain.ToggleLineAH();
+                InterfaceMain.ToggleSubCirclePC(); 
+                InterfaceMain.ToggleSubCircleLB();
+                InterfaceMain.ToggleSubCircleCM();
+                InterfaceMain.ToggleSubCircleAH();
+            }
+            if (InterfaceMain.ShowAHLine() && InterfaceMain.ShowCMLine() 
+                && InterfaceMain.ShowLBLine() && InterfaceMain.ShowPCLine()
+                && InterfaceMain.ShowSubCircleAH() && InterfaceMain.ShowSubCircleCM() && 
+                InterfaceMain.ShowSubCircleLB() && InterfaceMain.ShowSubCirclePC()) { 
+                // Gemini Used to find the Outside point circle formula 
+                InterfaceMain.DrawLineV({ 350, 250 }, { 280, 200 }, RAYWHITE); // PC Line 
+                InterfaceMain.DrawLineV({ 450, 250 }, { 520, 200 }, RAYWHITE); // LB Line
+                InterfaceMain.DrawLineV({ 350, 350 }, { 280, 400 }, RAYWHITE); // CM Line
+                InterfaceMain.DrawLineV({ 450, 350 }, { 520, 400 }, RAYWHITE); // AH Line
+
+                InterfaceMain.DrawCircle(280, 200, 30, PURPLE); // PC Circle
+                InterfaceMain.DrawCircle(520, 200, 30, BLUE);   // LB Circle
+                InterfaceMain.DrawCircle(280, 400, 30, VIOLET); // CM Circle 
+                InterfaceMain.DrawCircle(520, 400, 30, PURPLE); // AH Circle
+
+                // 1. Power Compartment Button (Near {280, 200})
+                if (Button({ 245, 240, 70, 25 }, "PC Info")) {
+                    
+                }
+
+                // 2. Logic Board Button (Near {520, 200})
+                if (Button({ 485, 240, 70, 25 }, "LB Info")) {
+
+                }
+
+                // 3. Control Module Button (Near {280, 400})
+                if (Button({ 245, 440, 70, 25 }, "CM Info")) {
+
+                }
+
+                // 4. Audio & Haptics Button (Near {520, 400})
+                if (Button({ 485, 440, 70, 25 }, "AH Info")) {
+
+                }
+            }
         }
-
+        EndMode2D();
         // Draw custom cursor on top of everything
         DrawCircleV(ballPosition, 15, ballColor);
-
         EndDrawing();
     }
-
-    // Clean up resources
-    UnloadTexture(smartphonePhoto);
-    UnloadTexture(diagramPhoto);
     CloseWindow();
     return 0;
 }
