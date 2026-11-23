@@ -79,21 +79,21 @@ int main(void) {
     Color textColor = BLUE;
     int fontSize = 50;
 
-    // DiagramNode class instances from Tempfun.h
+    // DiagramNode class instances from Tempfun.h.
     DiagramNode InterfaceMain;
     DiagramNode InterfaceSubPC;
     DiagramNode InterfaceSubLB;
     DiagramNode InterfaceSubCM;
     DiagramNode InterfaceSubAH;
 
-    // Initialize Raylib's Camera2D structure (adapted from Raylib's "2D Camera Mouse Zoom" example)
+    // Initialize Raylib's Camera2D structure (adapted from Raylib's "2D Camera Mouse Zoom" example).
     Camera2D camera = { 0 };
     camera.zoom = 1.0f;
     int zoomMode = 0;
 
     bool showButtons = false;
 
-    // Main Raylib render loop (runs once per frame until ESC or window close)
+    // Main Raylib render loop (runs once per frame until ESC or window close).
     while (!WindowShouldClose()) {
         // ---------------------------------------------------------
         // 1. INPUT & CURSOR UPDATES
@@ -105,7 +105,7 @@ int main(void) {
 
         ballPosition = GetMousePosition();
 
-        // Transition from opening photo to diagram when Enter is pressed
+        // Transition from opening photo to diagram when Enter is pressed.
         if (IsKeyPressed(KEY_ENTER) && currentPhoto.id == smartphonePhoto.id) {
             currentPhoto = diagramPhoto;
             message = "Hey " + name + ", click 'Learn More' to see\nthe compartments explained in depth.";
@@ -147,7 +147,7 @@ int main(void) {
             }
         }
 
-        // Click and drag with left mouse button to pan across the 2D camera view
+        // Click and drag with left mouse button to pan across the 2D camera view.
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             Vector2 delta = GetMouseDelta();
             delta = Vector2Scale(delta, -1.0f / camera.zoom);
@@ -160,17 +160,17 @@ int main(void) {
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // Draw image & prompt text (hidden once the interactive circles open)
+        // Draw image & prompt text (hidden once the interactive circles open).
         if (!InterfaceMain.ShowCircle()) {
             Rectangle source = { 0, 0, (float)currentPhoto.width, (float)currentPhoto.height };
             Rectangle dest;
 
             if (currentPhoto.id == smartphonePhoto.id) {
-                // Stretch initial background photo across the entire screen
+                // Stretch initial background photo across the entire screen.
                 dest = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() };
             }
             else {
-                // Scale diagramPhoto proportionally while leaving top margin for header text
+                // Scale diagramPhoto proportionally while leaving top margin for header text.
                 float topMargin = 60.0f;
                 float availableHeight = GetScreenHeight() - topMargin;
                 float scaleX = (float)GetScreenWidth() / currentPhoto.width;
@@ -194,7 +194,7 @@ int main(void) {
 
             DrawTexturePro(currentPhoto, source, dest, { 0, 0 }, 0.0f, WHITE);
 
-            // Used AI to help prevent long greeting text from overflowing off-screen.
+            // Used AI (Google Gemini) to help prevent long greeting text from overflowing off-screen.
             if (currentPhoto.id == smartphonePhoto.id) {
                 while (MeasureText(message.c_str(), fontSize) > GetScreenWidth() - 80 && fontSize > 10) {
                     fontSize -= 2;
@@ -220,14 +220,14 @@ int main(void) {
             }
         }
 
-        // Interactive node diagram rendered inside Raylib's 2D camera space
+        // Interactive node diagram rendered inside Raylib's 2D camera space.
         if (InterfaceMain.ShowCircle()) {
             BeginMode2D(camera);
 
             DrawCircle(400, 300, 50, RED);
             DrawCircleLines(400, 300, 70.0f, BLUE);
 
-            // Toggle visibility of the 4 outer compartment nodes
+            // Toggle visibility of the 4 outer compartment nodes.
             if (WorldButton({ 375, 320, 45, 25 }, "LEARN MORE..", camera)) {
                 InterfaceSubPC.ToggleCircle();
                 InterfaceSubLB.ToggleCircle();
@@ -235,17 +235,17 @@ int main(void) {
                 InterfaceSubAH.ToggleCircle();
             }
 
-            // Draw connecting lines, compartment nodes, and info buttons when expanded
+            // Draw connecting lines, compartment nodes, and info buttons when expanded.
             if (InterfaceSubPC.ShowCircle() && InterfaceSubLB.ShowCircle()
                 && InterfaceSubCM.ShowCircle() && InterfaceSubAH.ShowCircle()) {
 
-                // Connecting lines calculated with AI assistance using outer-point circle coordinates
+                // Connecting lines calculated with AI assistance (Google Gemin) using outer-point circle coordinates.
                 DrawLineV({ 350, 250 }, { 280, 200 }, RAYWHITE); // LB Line
                 DrawLineV({ 450, 250 }, { 520, 200 }, RAYWHITE); // CM Line
                 DrawLineV({ 350, 350 }, { 280, 400 }, RAYWHITE); // PC Line
                 DrawLineV({ 450, 350 }, { 520, 400 }, RAYWHITE); // AH Line
 
-                // Outer compartment circles
+                // Outer compartment circles.
                 DrawCircle(280, 200, 30, PURPLE); // LB Circle
                 DrawCircle(520, 200, 30, BLUE);   // CM Circle
                 DrawCircle(280, 400, 30, VIOLET); // PC Circle
@@ -268,7 +268,7 @@ int main(void) {
                 }
             }
 
-            // End 2D camera transformation so UI stays fixed to the screen
+            // End 2D camera transformation so UI stays fixed to the screen.
             EndMode2D();
         }
 
@@ -302,12 +302,12 @@ int main(void) {
             }
         }
 
-        // Draw custom cursor on top of everything
+        // Draw custom cursor on top of everything.
         DrawCircleV(ballPosition, 15, ballColor);
         EndDrawing();
     }
 
-    // Close Raylib window cleanly
+    // Close Raylib window cleanly.
     UnloadTexture(smartphonePhoto);
     UnloadTexture(diagramPhoto);
     CloseWindow();
