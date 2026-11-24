@@ -25,14 +25,14 @@ bool Button(Rectangle bounds, const char* text) {
 }
 
 // World-space button for elements rendered inside BeginMode2D(camera).
-// Written with AI assistance (Google Gemini): uses Raylib's GetScreenToWorld2D() so button hitboxes
+// Written with AI assistance (Google Gemini): uses Raylib's GetScreenToWorld2D() so button clicks
 // still align accurately when the user zooms or pans the 2D camera.
 bool WorldButton(Rectangle bounds, const char* text, Camera2D camera) {
     Vector2 worldMouse = GetScreenToWorld2D(GetMousePosition(), camera);
 
     if (CheckCollisionPointRec(worldMouse, bounds)) {
         DrawRectangleRec(bounds, SKYBLUE);
-        DrawText(text, bounds.x + 15, bounds.y + 15, 20, WHITE);
+        DrawText(text, bounds.x + 5, bounds.y + 2, 2, WHITE);
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             return true;
@@ -40,18 +40,18 @@ bool WorldButton(Rectangle bounds, const char* text, Camera2D camera) {
     }
     else {
         DrawRectangleRec(bounds, BLUE);
-        DrawText(text, bounds.x + 15, bounds.y + 15, 20, WHITE);
+        DrawText(text, bounds.x + 5, bounds.y + 2, 2, WHITE);
     }
 
     return false;
 }
 
 int main(void) {
-    // Cursor setup adapted from Raylib input/cursor examples
+    // Cursor setup (adapted from Raylib input/cursor examples)
     Vector2 ballPosition = { -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
 
-    // Terminal greeting.
+    // Terminal greeting
     string name;
     cout << "Welcome to our project! We will be explaining how different compartments of a smartphone work." << endl;
     cout << "You usually don't think about this on a daily basis, but now you will have the opportunity to discover " << endl;
@@ -79,21 +79,21 @@ int main(void) {
     Color textColor = BLUE;
     int fontSize = 50;
 
-    // DiagramNode class instances from Tempfun.h.
+    // DiagramNode class instances from Tempfun.h
     DiagramNode InterfaceMain;
     DiagramNode InterfaceSubPC;
     DiagramNode InterfaceSubLB;
     DiagramNode InterfaceSubCM;
     DiagramNode InterfaceSubAH;
 
-    // Initialize Raylib's Camera2D structure (adapted from Raylib's "2D Camera Mouse Zoom" example).
+    // Initialize Raylib's Camera2D struct (adapted from Raylib's "2D Camera Mouse Zoom" example)
     Camera2D camera = { 0 };
     camera.zoom = 1.0f;
     int zoomMode = 0;
 
     bool showButtons = false;
 
-    // Main Raylib render loop (runs once per frame until ESC or window close).
+    // Main Raylib render loop (runs once per frame until ESC or window close)
     while (!WindowShouldClose()) {
         // ---------------------------------------------------------
         // 1. INPUT & CURSOR UPDATES
@@ -105,7 +105,7 @@ int main(void) {
 
         ballPosition = GetMousePosition();
 
-        // Transition from opening photo to diagram when Enter is pressed.
+        // Transition from opening photo to diagram when Enter is pressed
         if (IsKeyPressed(KEY_ENTER) && currentPhoto.id == smartphonePhoto.id) {
             currentPhoto = diagramPhoto;
             message = "Hey " + name + ", click 'Learn More' to see\nthe compartments explained in depth.";
@@ -147,7 +147,7 @@ int main(void) {
             }
         }
 
-        // Click and drag with left mouse button to pan across the 2D camera view.
+        // Click and drag with left mouse button to pan across the 2D camera view
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             Vector2 delta = GetMouseDelta();
             delta = Vector2Scale(delta, -1.0f / camera.zoom);
@@ -160,17 +160,17 @@ int main(void) {
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // Draw image & prompt text (hidden once the interactive circles open).
+        // Draw image & prompt text (hidden once the interactive circles open)
         if (!InterfaceMain.ShowCircle()) {
             Rectangle source = { 0, 0, (float)currentPhoto.width, (float)currentPhoto.height };
             Rectangle dest;
 
             if (currentPhoto.id == smartphonePhoto.id) {
-                // Stretch initial background photo across the entire screen.
+                // Stretch initial background photo across the entire screen
                 dest = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() };
             }
             else {
-                // Scale diagramPhoto proportionally while leaving top margin for header text.
+                // Scale diagramPhoto proportionally while leaving top margin for header text
                 float topMargin = 60.0f;
                 float availableHeight = GetScreenHeight() - topMargin;
                 float scaleX = (float)GetScreenWidth() / currentPhoto.width;
@@ -194,7 +194,7 @@ int main(void) {
 
             DrawTexturePro(currentPhoto, source, dest, { 0, 0 }, 0.0f, WHITE);
 
-            // Used AI (Google Gemini) to help prevent long greeting text from overflowing off-screen.
+            // Used AI to help prevent long greeting text from overflowing off-screen.
             if (currentPhoto.id == smartphonePhoto.id) {
                 while (MeasureText(message.c_str(), fontSize) > GetScreenWidth() - 80 && fontSize > 10) {
                     fontSize -= 2;
@@ -220,55 +220,55 @@ int main(void) {
             }
         }
 
-        // Interactive node diagram rendered inside Raylib's 2D camera space.
+        // Interactive node diagram rendered inside Raylib's 2D camera space
         if (InterfaceMain.ShowCircle()) {
             BeginMode2D(camera);
 
             DrawCircle(400, 300, 50, RED);
             DrawCircleLines(400, 300, 70.0f, BLUE);
 
-            // Toggle visibility of the 4 outer compartment nodes.
-            if (WorldButton({ 375, 320, 45, 25 }, "LEARN MORE..", camera)) {
+            // Toggle visibility of the 4 outer compartment nodes
+            if (WorldButton({ 375, 320, 45, 25 }, "LEARN \nMORE..", camera)) {
                 InterfaceSubPC.ToggleCircle();
                 InterfaceSubLB.ToggleCircle();
                 InterfaceSubCM.ToggleCircle();
                 InterfaceSubAH.ToggleCircle();
             }
 
-            // Draw connecting lines, compartment nodes, and info buttons when expanded.
+            // Draw connecting lines, compartment nodes, and info buttons when expanded
             if (InterfaceSubPC.ShowCircle() && InterfaceSubLB.ShowCircle()
                 && InterfaceSubCM.ShowCircle() && InterfaceSubAH.ShowCircle()) {
 
-                // Connecting lines calculated with AI assistance (Google Gemin) using outer-point circle coordinates.
+                // Connecting lines calculated with AI assistance using outer-point circle coordinates
                 DrawLineV({ 350, 250 }, { 280, 200 }, RAYWHITE); // LB Line
                 DrawLineV({ 450, 250 }, { 520, 200 }, RAYWHITE); // CM Line
                 DrawLineV({ 350, 350 }, { 280, 400 }, RAYWHITE); // PC Line
                 DrawLineV({ 450, 350 }, { 520, 400 }, RAYWHITE); // AH Line
 
-                // Outer compartment circles.
+                // Outer compartment circles
                 DrawCircle(280, 200, 30, PURPLE); // LB Circle
                 DrawCircle(520, 200, 30, BLUE);   // CM Circle
                 DrawCircle(280, 400, 30, VIOLET); // PC Circle
                 DrawCircle(520, 400, 30, PURPLE); // AH Circle
 
                 // 1. Power Compartment Button (Near {280, 200})
-                if (WorldButton({ 245, 240, 70, 25 }, "LB Info", camera)) {
+                if (WorldButton({ 245, 240, 48, 15 }, "LB Info", camera)) {
                 }
 
                 // 2. Logic Board Button (Near {520, 200})
-                if (WorldButton({ 485, 240, 70, 25 }, "CM Info", camera)) {
+                if (WorldButton({ 485, 240, 48, 15 }, "CM Info", camera)) {
                 }
 
                 // 3. Control Module Button (Near {280, 400})
-                if (WorldButton({ 245, 440, 70, 25 }, "PC Info", camera)) {
+                if (WorldButton({ 245, 440, 48, 15 }, "PC Info", camera)) {
                 }
 
                 // 4. Audio & Haptics Button (Near {520, 400})
-                if (WorldButton({ 485, 440, 70, 25 }, "AH Info", camera)) {
+                if (WorldButton({ 485, 440, 48, 15 }, "AH Info", camera)) {
                 }
             }
 
-            // End 2D camera transformation so UI stays fixed to the screen.
+            // End 2D camera transformation so UI stays fixed to the screen
             EndMode2D();
         }
 
@@ -302,12 +302,12 @@ int main(void) {
             }
         }
 
-        // Draw custom cursor on top of everything.
+        // Draw custom cursor on top of everything
         DrawCircleV(ballPosition, 15, ballColor);
         EndDrawing();
     }
 
-    // Close Raylib window cleanly.
+    // Close Raylib window cleanly
     UnloadTexture(smartphonePhoto);
     UnloadTexture(diagramPhoto);
     CloseWindow();
